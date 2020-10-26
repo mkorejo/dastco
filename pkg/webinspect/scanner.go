@@ -20,7 +20,7 @@ type ScanStatus struct {
 	Status string `json:"scanStatus"`
 }
 
-// GetScanStatus returns the status of a specific scan.
+// GetScanStatus returns the status of an existing scan.
 func GetScanStatus(client *http.Client, url string, username string, password string, scanID string) ScanStatus {
 	req, err := http.NewRequest("GET", url+"/scanner/scans/"+scanID, nil)
 	if err != nil {
@@ -42,7 +42,7 @@ func GetScanStatus(client *http.Client, url string, username string, password st
 func ListScans(client *http.Client, url string, username string, password string) []Scan {
 	req, err := http.NewRequest("GET", url+"/scanner/scans/", nil)
 	if err != nil {
-		log.Error("Building the HTTP request:", err)
+		log.Error("Building the HTTP request: ", err)
 	}
 	req.SetBasicAuth(username, password)
 
@@ -51,12 +51,25 @@ func ListScans(client *http.Client, url string, username string, password string
 	// Unmarshal the JSON
 	s := []Scan{}
 	if err := json.Unmarshal(body, &s); err != nil {
-		log.Error("Reading JSON:", err)
+		log.Error("Reading JSON: ", err)
 	}
 	return s
 }
 
-// StartScan ...
-func StartScan(client *http.Client, url string, username string, password string) {
+// StartStopScan starts or stops an existing scan.
+func StartStopScan(client *http.Client, url string, username string, password string, scanID string, action string) ScanStatus {
+	req, err := http.NewRequest("POST", url+"/scanner/scans/"+scanID+"?action="+action, nil)
+	if err != nil {
+		log.Error("Building the HTTP request: ", err)
+	}
+	req.SetBasicAuth(username, password)
 
+	body := InvokeWebInspectAPI(client, req)
+
+	// Unmarshal the JSON
+	s := ScanStatus{}
+	if err := json.Unmarshal(body, &s); err != nil {
+		log.Error("Reading JSON: ", err)
+	}
+	return s
 }

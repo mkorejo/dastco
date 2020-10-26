@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// InvokeWebInspectAPI abstracts the HTTP request/response flow and returns the HTTP response body.
+// InvokeWebInspectAPI encapsulates the HTTP request/response flow and returns an HTTP response body.
 func InvokeWebInspectAPI(client *http.Client, request *http.Request) []byte {
 	resp, err := client.Do(request)
 	if err != nil {

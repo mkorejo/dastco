@@ -28,10 +28,17 @@ var webInspectCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(webInspectCmd)
 
-	webInspectCmd.AddCommand(webInspectListScansCmd)
 	webInspectCmd.AddCommand(webInspectGetScanStatusCmd)
+	webInspectCmd.AddCommand(webInspectListScansCmd)
+	webInspectCmd.AddCommand(webInspectResumeScanCmd)
+	webInspectCmd.AddCommand(webInspectRetestScanCmd)
+	webInspectCmd.AddCommand(webInspectRetestStatusCmd)
+	webInspectCmd.AddCommand(webInspectStopScanCmd)
 
-	webInspectGetScanStatusCmd.Flags().StringVar(&scanID, "scan-id", "", "Scan ID")
+	webInspectCmd.PersistentFlags().StringVar(&scanID, "scan-id", "", "Scan ID")
+	webInspectCmd.PersistentFlags().StringVarP(&url, "url", "U", "", "WebInspect API URL")
+	webInspectCmd.PersistentFlags().StringVarP(&username, "username", "u", "", "WebInspect username")
+	webInspectCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "Password for WebInspect username")
 	// gkeInspectCmd.Flags().BoolVar(&skipVault, "skip-vault", false, "Skip Vault during cluster inspection")
 }
 
@@ -62,17 +69,59 @@ var webInspectListScansCmd = &cobra.Command{
 	},
 }
 
-var webInspectStartScanCmd = &cobra.Command{
-	Use:   "start",
-	Short: "Start a scan",
+var webInspectResumeScanCmd = &cobra.Command{
+	Use:   "resume",
+	Short: "Resume a stopped scan",
 	Run: func(cmd *cobra.Command, args []string) {
 		readConfig()
 		if scanID == "" {
 			log.Fatal("You must specify --scan-id.")
 		}
 		c := createHTTPClient()
-		list := webinspect.ListScans(c, url, username, password)
-		fmt.Println(list)
+		status := webinspect.StartStopScan(c, url, username, password, scanID, "continue")
+		fmt.Println(status)
+	},
+}
+
+var webInspectRetestScanCmd = &cobra.Command{
+	Use:   "retest",
+	Short: "Start a scan retest",
+	Run: func(cmd *cobra.Command, args []string) {
+		readConfig()
+		if scanID == "" {
+			log.Fatal("You must specify --scan-id.")
+		}
+		// c := createHTTPClient()
+		// status := webinspect.StartStopScan(c, url, username, password, scanID, "continue")
+		// fmt.Println(status)
+	},
+}
+
+var webInspectRetestStatusCmd = &cobra.Command{
+	Use:   "retest-status",
+	Short: "Get the status of a scan retest",
+	Run: func(cmd *cobra.Command, args []string) {
+		readConfig()
+		if scanID == "" {
+			log.Fatal("You must specify --scan-id.")
+		}
+		// c := createHTTPClient()
+		// status := webinspect.StartStopScan(c, url, username, password, scanID, "continue")
+		// fmt.Println(status)
+	},
+}
+
+var webInspectStopScanCmd = &cobra.Command{
+	Use:   "stop",
+	Short: "Stop a running scan",
+	Run: func(cmd *cobra.Command, args []string) {
+		readConfig()
+		if scanID == "" {
+			log.Fatal("You must specify --scan-id.")
+		}
+		c := createHTTPClient()
+		status := webinspect.StartStopScan(c, url, username, password, scanID, "stop")
+		fmt.Println(status)
 	},
 }
 

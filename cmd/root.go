@@ -45,10 +45,7 @@ func init() {
 
 	// PersistentFlags will work for this command and all subcommands.
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "Configuration file (defaults to ~/.dastco)")
-	rootCmd.PersistentFlags().StringVarP(&url, "url", "U", "", "WebInspect API URL")
 	rootCmd.PersistentFlags().BoolVarP(&insecure, "insecure", "k", false, "Trust all SSL certificates")
-	rootCmd.PersistentFlags().StringVarP(&username, "username", "u", "", "WebInspect username")
-	rootCmd.PersistentFlags().StringVarP(&password, "password", "p", "", "Password for WebInspect username")
 
 	// Flags will only run when this action is called directly.
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
